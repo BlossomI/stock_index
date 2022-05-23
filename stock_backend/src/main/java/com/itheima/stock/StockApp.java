@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Version 1.0
  **/
 @SpringBootApplication
-@MapperScan("com.itheima.dao")
+@MapperScan("com.itheima.stock.mapper")
 public class StockApp {
     public static void main(String[] args) {
         SpringApplication.run(StockApp.class, args);
