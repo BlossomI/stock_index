@@ -76,7 +76,18 @@ public class UserServiceImpl implements UserService {
             return R.error(ResponseCode.DATA_ERROR.getMessage());
         }
         System.out.println("data exists, start query and conpare password");
+        
+        // 验证码校验
+        String rCode = (String) redisTemplate.opsForValue().get(loginReqVo.getrKey());
+        // 如果不匹配则返回验证码错误
+        if (Strings.isNullOrEmpty(rCode) || !rCode.equals(vo.getCode())){
+            return R.error(ResponceCode.SYSTEM_VERIFY_CODE_ERROR.getMessage());
+        }
 
+        // redis 清除key
+        redisTemplate.delete(loginReqVo.getRkey());
+
+        
         // if not null, then query data and compare
         SysUser user = sysUserMapper.findByUsername(loginReqVo.getUsername());
 

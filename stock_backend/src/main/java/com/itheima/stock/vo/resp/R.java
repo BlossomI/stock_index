@@ -84,5 +84,5 @@ public class R<T> implements Serializable {
 
     public T getData() {
         return data;
-    }
+    } 
 }
