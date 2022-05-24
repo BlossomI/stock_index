@@ -7,6 +7,7 @@ import com.itheima.stock.vo.resp.R;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 /**
  * @Description
@@ -22,6 +23,22 @@ public class UserController {
     @Resource
     private UserService userService;
 
+
+
+    /**
+     * 生成验证码
+     *  map结构：
+     *      code： xxx,
+     *      rkey: xxx
+     * @return
+     */
+    @GetMapping("/captcha")
+    public R<Map> generateCaptcha(){
+        return userService.generateCaptcha();
+    }
+
+
+
     /**
      * Login
      *
@@ -35,6 +52,9 @@ public class UserController {
 
         return userService.login(loginReqVo);
     }
+
+
+
 
 
 //    @GetMapping

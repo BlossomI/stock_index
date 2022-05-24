@@ -4,6 +4,8 @@ import com.itheima.stock.vo.req.LoginReqVo;
 import com.itheima.stock.vo.resp.LoginRespVo;
 import com.itheima.stock.vo.resp.R;
 
+import java.util.Map;
+
 /**
  * @Description
  * @Author Harry
@@ -13,4 +15,8 @@ import com.itheima.stock.vo.resp.R;
 public interface UserService {
 
     R<LoginRespVo> login(LoginReqVo loginReqVo);
+
+    R<Map> generateCaptcha();
 }
+
+

@@ -1,5 +1,6 @@
 package com.itheima.stock.config;
 
+import com.itheima.stock.util.IdWorker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,5 +23,14 @@ public class CommonConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    /**
+     * 配置id生成器bean
+     * @return 工具类对象
+     */
+    @Bean
+    public IdWorker idWorker(){
+        return new IdWorker();
     }
 }

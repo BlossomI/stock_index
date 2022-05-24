@@ -6,14 +6,21 @@ import com.itheima.stock.common.enums.ResponseCode;
 import com.itheima.stock.mapper.SysUserMapper;
 import com.itheima.stock.pojo.SysUser;
 import com.itheima.stock.service.UserService;
+import com.itheima.stock.util.IdWorker;
 import com.itheima.stock.vo.req.LoginReqVo;
 import com.itheima.stock.vo.resp.LoginRespVo;
 import com.itheima.stock.vo.resp.R;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description
@@ -32,9 +39,37 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
 
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
+
+
+    @Resource
+    private IdWorker idWorker;
+
+
+
+    @Override
+    public R<Map> generateCaptcha() {
+
+        // 1. 生成四位数验证码
+        String checkCode = RandomStringUtils.randomNumeric(4);
+
+        // 2. 获取唯一id
+        String rKey = String.valueOf(idWorker.nextId());
+
+        // 3. 将验证码存入redis中，并设置有效期一分钟
+        redisTemplate.opsForValue().set(rKey,checkCode,60, TimeUnit.SECONDS);
+
+        // 4. 组装数据
+        HashMap<String, String> map = new HashMap<>();
+        map.put("rKey",rKey);
+        map.put("code",checkCode);
+
+        return R.ok(map);
+    }
+
     @Override
     public R<LoginRespVo> login(LoginReqVo loginReqVo) {
-
         // if param is null or empty, return R with String error
         if (loginReqVo == null || Strings.isNullOrEmpty(loginReqVo.getUsername()) ||
                 Strings.isNullOrEmpty(loginReqVo.getPassword())) {
