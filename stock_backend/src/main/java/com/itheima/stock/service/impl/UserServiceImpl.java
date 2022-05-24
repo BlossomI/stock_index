@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,7 +46,6 @@ public class UserServiceImpl implements UserService {
     private IdWorker idWorker;
 
 
-
     @Override
     public R<Map> generateCaptcha() {
 
@@ -58,12 +56,14 @@ public class UserServiceImpl implements UserService {
         String rKey = String.valueOf(idWorker.nextId());
 
         // 3. 将验证码存入redis中，并设置有效期一分钟
-        redisTemplate.opsForValue().set(rKey,checkCode,60, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(rKey, checkCode, 60, TimeUnit.SECONDS);
 
         // 4. 组装数据
         HashMap<String, String> map = new HashMap<>();
-        map.put("rKey",rKey);
-        map.put("code",checkCode);
+        map.put("rkey", rKey);
+        map.put("code", checkCode);
+
+        System.out.println("map = " + map);
 
         return R.ok(map);
     }
@@ -71,23 +71,32 @@ public class UserServiceImpl implements UserService {
     @Override
     public R<LoginRespVo> login(LoginReqVo loginReqVo) {
         // if param is null or empty, return R with String error
-        if (loginReqVo == null || Strings.isNullOrEmpty(loginReqVo.getUsername()) ||
-                Strings.isNullOrEmpty(loginReqVo.getPassword())) {
+        if (loginReqVo == null
+                || Strings.isNullOrEmpty(loginReqVo.getUsername())
+                || Strings.isNullOrEmpty(loginReqVo.getPassword())
+                || Strings.isNullOrEmpty(loginReqVo.getCode())
+                || Strings.isNullOrEmpty(loginReqVo.getRkey())
+        ) {
             return R.error(ResponseCode.DATA_ERROR.getMessage());
         }
         System.out.println("data exists, start query and conpare password");
-        
-        // 验证码校验
-        String rCode = (String) redisTemplate.opsForValue().get(loginReqVo.getrKey());
+
+
+
+        // =======================验证码校验=================================
+        String rCode = redisTemplate.opsForValue().get(loginReqVo.getRkey());
         // 如果不匹配则返回验证码错误
-        if (Strings.isNullOrEmpty(rCode) || !rCode.equals(vo.getCode())){
-            return R.error(ResponceCode.SYSTEM_VERIFY_CODE_ERROR.getMessage());
+        if (Strings.isNullOrEmpty(rCode) || !rCode.equals(loginReqVo.getCode())) {
+            return R.error(ResponseCode.SYSTEM_VERIFY_CODE_ERROR.getMessage());
         }
 
         // redis 清除key
         redisTemplate.delete(loginReqVo.getRkey());
 
-        
+
+
+
+        // ========================比对密码===========================================
         // if not null, then query data and compare
         SysUser user = sysUserMapper.findByUsername(loginReqVo.getUsername());
 

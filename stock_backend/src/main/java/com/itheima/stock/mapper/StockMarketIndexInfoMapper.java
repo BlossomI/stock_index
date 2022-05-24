@@ -1,6 +1,11 @@
 package com.itheima.stock.mapper;
 
+import com.itheima.stock.common.domain.InnerMarketDomain;
 import com.itheima.stock.pojo.StockMarketIndexInfo;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
+import java.util.List;
 
 /**
 * @author Harry
@@ -22,4 +27,6 @@ public interface StockMarketIndexInfoMapper {
 
     int updateByPrimaryKey(StockMarketIndexInfo record);
 
+    List<InnerMarketDomain> selectByIdsAndDate(@Param("ids") List<String> innerIds,
+                                               @Param("lastDate") Date lastDate);
 }

@@ -24,19 +24,18 @@ public class UserController {
     private UserService userService;
 
 
-
     /**
      * 生成验证码
-     *  map结构：
-     *      code： xxx,
-     *      rkey: xxx
+     * map结构：
+     * code： xxx,
+     * rkey: xxx
+     *
      * @return
      */
     @GetMapping("/captcha")
-    public R<Map> generateCaptcha(){
+    public R<Map> generateCaptcha() {
         return userService.generateCaptcha();
     }
-
 
 
     /**
@@ -52,9 +51,6 @@ public class UserController {
 
         return userService.login(loginReqVo);
     }
-
-
-
 
 
 //    @GetMapping

@@ -1,6 +1,8 @@
 package com.itheima.stock.service;
 
+import com.itheima.stock.common.domain.InnerMarketDomain;
 import com.itheima.stock.pojo.StockBusiness;
+import com.itheima.stock.vo.resp.R;
 
 import java.util.List;
 
@@ -13,5 +15,7 @@ import java.util.List;
 
 public interface StockService {
 
-    List<StockBusiness> getAllBusiness();
+//    List<StockBusiness> getAllBusiness();
+
+    R<List<InnerMarketDomain>> InnerIndexAll();
 }
