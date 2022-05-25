@@ -17,7 +17,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,mark_Id,cur_time,
+        id
+        ,mark_Id,cur_time,
         mark_name,cur_point,current_price,
         updown_rate,trade_account,trade_volume
     </sql>
@@ -28,6 +29,7 @@
         from stock_market_index_info
         where id = #{id,jdbcType=VARCHAR}
     </select>
+
 
 
     <select id="selectByIdsAndDate" resultType="com.itheima.stock.common.domain.InnerMarketDomain">
@@ -60,11 +62,12 @@
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         DELETE
-        FROM
-            stock_market_index_info
-        WHERE
-            id = #{id,jdbcType=VARCHAR}
+        FROM stock_market_index_info
+        WHERE id = #{id,jdbcType=VARCHAR}
     </delete>
+
+
+
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.itheima.stock.pojo.StockMarketIndexInfo"
             useGeneratedKeys="true">
         INSERT INTO stock_market_index_info
@@ -133,15 +136,14 @@
     </update>
     <update id="updateByPrimaryKey" parameterType="com.itheima.stock.pojo.StockMarketIndexInfo">
         UPDATE stock_market_index_info
-        SET mark_Id = #{markId,jdbcType=CHAR},
-            cur_time = #{curTime,jdbcType=TIMESTAMP},
-            mark_name = #{markName,jdbcType=VARCHAR},
-            cur_point = #{curPoint,jdbcType=DECIMAL},
+        SET mark_Id       = #{markId,jdbcType=CHAR},
+            cur_time      = #{curTime,jdbcType=TIMESTAMP},
+            mark_name     = #{markName,jdbcType=VARCHAR},
+            cur_point     = #{curPoint,jdbcType=DECIMAL},
             current_price = #{currentPrice,jdbcType=DECIMAL},
-            updown_rate = #{updownRate,jdbcType=DECIMAL},
+            updown_rate   = #{updownRate,jdbcType=DECIMAL},
             trade_account = #{tradeAccount,jdbcType=BIGINT},
-            trade_volume = #{tradeVolume,jdbcType=BIGINT}
-        WHERE
-            id = #{id,jdbcType=VARCHAR}
+            trade_volume  = #{tradeVolume,jdbcType=BIGINT}
+        WHERE id = #{id,jdbcType=VARCHAR}
     </update>
 </mapper>

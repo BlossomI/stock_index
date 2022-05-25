@@ -1,6 +1,7 @@
 package com.itheima.stock.controller;
 
 import com.itheima.stock.common.domain.InnerMarketDomain;
+import com.itheima.stock.common.domain.StockBlockDomain;
 import com.itheima.stock.pojo.StockBusiness;
 import com.itheima.stock.service.StockService;
 import com.itheima.stock.vo.resp.R;
@@ -26,9 +27,14 @@ public class StockController {
 
 
     @GetMapping("/index/all")
-    public R<List<InnerMarketDomain>> innerIndexALl(){
+    public R<List<InnerMarketDomain>> innerIndexALl() {
 
         return stockService.InnerIndexAll();
+    }
+
+    @GetMapping("/sector/all")
+    public R<List<StockBlockDomain>> sectorAll() {
+        return stockService.sectorAllLimit();
     }
 
 

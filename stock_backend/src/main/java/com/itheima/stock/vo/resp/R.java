@@ -1,6 +1,7 @@
 package com.itheima.stock.vo.resp;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 
 import java.io.Serializable;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  */
 //保证序列化json的时候,如果是null的对象,key也会消失
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
 public class R<T> implements Serializable {
     private static final long serialVersionUID = 7735505903525411467L;
 

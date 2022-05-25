@@ -1,6 +1,9 @@
 package com.itheima.stock.mapper;
 
+import com.itheima.stock.common.domain.StockBlockDomain;
 import com.itheima.stock.pojo.StockBlockRtInfo;
+
+import java.util.List;
 
 /**
 * @author Harry
@@ -22,4 +25,10 @@ public interface StockBlockRtInfoMapper {
 
     int updateByPrimaryKey(StockBlockRtInfo record);
 
+    /**
+     * 沪深两市板块分时行情数据查询，以交易时间和交易总金额降序查询，取前10条数据
+     *
+     * @return StockBlockDomain 列表对象
+     */
+    List<StockBlockDomain> sectorAllLimit();
 }

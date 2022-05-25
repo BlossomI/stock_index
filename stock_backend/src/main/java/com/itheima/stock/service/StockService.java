@@ -1,6 +1,8 @@
 package com.itheima.stock.service;
 
 import com.itheima.stock.common.domain.InnerMarketDomain;
+import com.itheima.stock.common.domain.StockBlockDomain;
+import com.itheima.stock.pojo.StockBlockRtInfo;
 import com.itheima.stock.pojo.StockBusiness;
 import com.itheima.stock.vo.resp.R;
 
@@ -18,4 +20,6 @@ public interface StockService {
 //    List<StockBusiness> getAllBusiness();
 
     R<List<InnerMarketDomain>> InnerIndexAll();
+
+    R<List<StockBlockDomain>> sectorAllLimit();
 }
