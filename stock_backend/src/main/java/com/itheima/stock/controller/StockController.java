@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description
@@ -65,8 +66,8 @@ public class StockController {
     }
 
     @GetMapping("/updown/count")
-    public R<map> upDownCount(){
-        retuen stockService.upDownCount();
+    public R<Map> upDownCount() {
+        return stockService.upDownCount();
     }
 
 }

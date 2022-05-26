@@ -9,6 +9,7 @@ import com.itheima.stock.vo.resp.PageResult;
 import com.itheima.stock.vo.resp.R;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description stock业务层接口
@@ -38,5 +39,5 @@ public interface StockService {
      * 	    downList:跌停数据统计
      * @return
      */
-    R<map> UpDownCount();
+    R<Map> upDownCount();
 }

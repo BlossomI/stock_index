@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @Description
@@ -147,18 +144,42 @@ public class StockServiceImpl implements StockService {
 
 
     @Override
-    public R<map> upDownCount(){
+    public R<Map> upDownCount() {
+
         // 1 获取股票最近的有效交易日期
-        
+        DateTime curDateTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+
+        Date curDate = curDateTime.toDate();
+
         // 开盘日期
-        
+        Date openDate = DateTimeUtil.getOpenDate(curDateTime).toDate();
+
         // todo mock data
         String curTimeStr = "20220106142500";
-        
+
+        // 对应开票日期mock
+        String openTimeStr = "20220106092500";
+        curDate = DateTime.parse(curTimeStr, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+
+        openDate = DateTime.parse(openTimeStr, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+
+
+//        统计涨跌停的数据， 约定 1 涨停，0跌停
+        List<Map> upList = stockRtInfoMapper.upDownCount(curDate, openDate, 1);
+
+        System.out.println(upList);
+
+        List<Map> downList = stockRtInfoMapper.upDownCount(curDate, openDate, 0);
+
+        System.out.println(downList);
+
+        HashMap result = new HashMap();
+        result.put("upList", upList);
+        result.put("downList", downList);
+
+        return R.ok(result);
 
     }
-
-
 
 
     //    @Override

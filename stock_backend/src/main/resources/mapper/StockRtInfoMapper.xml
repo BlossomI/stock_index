@@ -25,14 +25,8 @@
         trade_amount,trade_volume
     </sql>
 
-    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from db_socket_backend.stock_rt_info
-        where id = #{id,jdbcType=VARCHAR}
-    </select>
 
-
+    <!--分页查询涨幅榜-->
     <select id="stockIncreaseLimit" resultType="com.itheima.stock.common.domain.StockUpDownDomain">
         SELECT
             trade_amount                                    AS tradeAmt,
@@ -52,6 +46,8 @@
                  upDown DESC
         LIMIT 10;
     </select>
+
+    <!--涨幅榜-->
     <select id="stockAll" resultType="com.itheima.stock.common.domain.StockUpDownDomain">
         SELECT
             trade_amount                                    AS tradeAmt,
@@ -70,7 +66,37 @@
                  updown DESC
     </select>
 
+    <!--条件查询涨停、跌停数据-->
+    <select id="upDownCount" resultType="java.util.Map">
+        SELECT
+        tmp.curTime AS `time`,
+        COUNT(*) AS `count`
+        FROM
+        (
+        SELECT
+        DATE_FORMAT(cur_time,'%Y%m%d%H%i') AS `curTime`,
+        (cur_price-pre_close_price)/pre_close_price AS upDown
+        FROM
+        stock_rt_info
+        WHERE cur_time BETWEEN #{openDate} AND #{avlDate}
+        HAVING
+        <if test="flag==1">
+            upDown >=0.05
+        </if>
+        <if test="flag==0">
+            upDown &lt;=-0.05
+        </if>
+        ) AS tmp
+        GROUP BY tmp.curTime
+    </select>
 
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from db_socket_backend.stock_rt_info
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         DELETE
         FROM
