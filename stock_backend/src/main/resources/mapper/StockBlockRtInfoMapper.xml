@@ -62,6 +62,7 @@
         WHERE
             id = #{id,jdbcType=VARCHAR}
     </delete>
+
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.itheima.stock.pojo.StockBlockRtInfo"
             useGeneratedKeys="true">
         INSERT INTO db_socket_backend.stock_block_rt_info
@@ -72,6 +73,8 @@
                , #{companyNum,jdbcType=INTEGER}, #{avgPrice,jdbcType=DECIMAL}, #{updownRate,jdbcType=DECIMAL}
                , #{tradeAmount,jdbcType=BIGINT}, #{tradeVolume,jdbcType=DECIMAL}, #{curTime,jdbcType=TIMESTAMP})
     </insert>
+
+
     <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.itheima.stock.pojo.StockBlockRtInfo"
             useGeneratedKeys="true">
         insert into db_socket_backend.stock_block_rt_info
@@ -98,6 +101,8 @@
             <if test="curTime != null">#{curTime,jdbcType=TIMESTAMP},</if>
         </trim>
     </insert>
+
+
     <update id="updateByPrimaryKeySelective" parameterType="com.itheima.stock.pojo.StockBlockRtInfo">
         update db_socket_backend.stock_block_rt_info
         <set>
@@ -128,6 +133,9 @@
         </set>
         where id = #{id,jdbcType=VARCHAR}
     </update>
+
+
+
     <update id="updateByPrimaryKey" parameterType="com.itheima.stock.pojo.StockBlockRtInfo">
         UPDATE db_socket_backend.stock_block_rt_info
         SET label = #{label,jdbcType=VARCHAR},

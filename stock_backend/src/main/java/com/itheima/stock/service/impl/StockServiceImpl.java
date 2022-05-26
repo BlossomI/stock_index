@@ -1,15 +1,20 @@
 package com.itheima.stock.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.itheima.stock.common.domain.InnerMarketDomain;
 import com.itheima.stock.common.domain.StockBlockDomain;
 import com.itheima.stock.common.domain.StockInfoConfig;
+import com.itheima.stock.common.domain.StockUpDownDomain;
 import com.itheima.stock.common.enums.ResponseCode;
 import com.itheima.stock.mapper.StockBlockRtInfoMapper;
 import com.itheima.stock.mapper.StockBusinessMapper;
 import com.itheima.stock.mapper.StockMarketIndexInfoMapper;
+import com.itheima.stock.mapper.StockRtInfoMapper;
 import com.itheima.stock.pojo.StockBlockRtInfo;
 import com.itheima.stock.service.StockService;
 import com.itheima.stock.util.DateTimeUtil;
+import com.itheima.stock.vo.resp.PageResult;
 import com.itheima.stock.vo.resp.R;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -32,15 +37,16 @@ import java.util.List;
 @Service
 public class StockServiceImpl implements StockService {
 
-    @Resource
-    private StockBusinessMapper stockBusinessMapper;
-
+    //<editor-fold desc="Mapper bean">
     @Resource
     private StockMarketIndexInfoMapper stockMarketIndexInfoMapper;
 
-
     @Resource
     private StockBlockRtInfoMapper stockBlockRtInfoMapper;
+
+    @Resource
+    private StockRtInfoMapper stockRtInfoMapper;
+    //</editor-fold>
 
 
     @Resource
@@ -82,14 +88,63 @@ public class StockServiceImpl implements StockService {
         }
 
 
-
-
-
         // 组装数据
         return R.ok(stockBlockList);
     }
 
-//    @Override
+    /**
+     * 沪深两市个股涨幅分时行情数据查询，以时间顺序和涨幅查询前10条数据
+     *
+     * @return
+     */
+    @Override
+    public R<List<StockUpDownDomain>> stockIncreaseLimit() {
+
+        // 获取当前有效时间
+        Date curDateTime = DateTimeUtil.getLastDate4Stock(DateTime.now()).toDate();
+
+
+        // mock数据
+        String mockStr = "2021-12-27 09:47:00";
+
+        curDateTime = DateTime.parse(mockStr, DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+
+        // 调用mapper接口查询前十的数据，以时间顺序
+        List<StockUpDownDomain> infos = stockRtInfoMapper.stockIncreaseLimit(curDateTime);
+
+        if (CollectionUtils.isEmpty(infos)) {
+            return R.error(ResponseCode.NO_RESPONSE_DATA.getMessage());
+        }
+
+
+        return R.ok(infos);
+    }
+
+    /**
+     * 分页查询涨幅榜数据
+     *
+     * @param page     当前页
+     * @param pageSize 每页显示条目数
+     * @return R结果集，data为分页数据，data中rows为数据库查询结果集
+     */
+    @Override
+    public R<PageResult<StockUpDownDomain>> stockPage(Integer page, Integer pageSize) {
+        // 设置分页参数
+        PageHelper.startPage(page, pageSize);
+
+        // 查询所有数据
+        List<StockUpDownDomain> infos = stockRtInfoMapper.stockAll();
+
+        // 将全部数据放到new出来的PageInfo对象中
+        PageInfo<StockUpDownDomain> pageInfo = new PageInfo<>(infos);
+
+
+        // 转换结果集
+        PageResult<StockUpDownDomain> pageResult = new PageResult<>(pageInfo);
+
+        return R.ok(pageResult);
+    }
+    //    @Override
 //    public List<StockBusiness> getAllBusiness() {
 //
 //        return stockBusinessMapper.getAll();

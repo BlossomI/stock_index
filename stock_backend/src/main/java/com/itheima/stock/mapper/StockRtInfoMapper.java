@@ -1,6 +1,11 @@
 package com.itheima.stock.mapper;
 
+import com.itheima.stock.common.domain.StockUpDownDomain;
 import com.itheima.stock.pojo.StockRtInfo;
+import org.joda.time.DateTime;
+
+import java.util.Date;
+import java.util.List;
 
 /**
 * @author Harry
@@ -22,4 +27,7 @@ public interface StockRtInfoMapper {
 
     int updateByPrimaryKey(StockRtInfo record);
 
+    List<StockUpDownDomain> stockIncreaseLimit(Date curDateTime);
+
+    List<StockUpDownDomain> stockAll();
 }

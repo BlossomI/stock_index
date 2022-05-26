@@ -2,8 +2,10 @@ package com.itheima.stock.service;
 
 import com.itheima.stock.common.domain.InnerMarketDomain;
 import com.itheima.stock.common.domain.StockBlockDomain;
+import com.itheima.stock.common.domain.StockUpDownDomain;
 import com.itheima.stock.pojo.StockBlockRtInfo;
 import com.itheima.stock.pojo.StockBusiness;
+import com.itheima.stock.vo.resp.PageResult;
 import com.itheima.stock.vo.resp.R;
 
 import java.util.List;
@@ -22,4 +24,8 @@ public interface StockService {
     R<List<InnerMarketDomain>> InnerIndexAll();
 
     R<List<StockBlockDomain>> sectorAllLimit();
+
+    R<List<StockUpDownDomain>> stockIncreaseLimit();
+
+    R<PageResult<StockUpDownDomain>> stockPage(Integer page, Integer pageSize);
 }
