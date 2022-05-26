@@ -64,5 +64,9 @@ public class StockController {
         return stockService.stockPage(page, pageSize);
     }
 
+    @GetMapping("/updown/count")
+    public R<map> upDownCount(){
+        retuen stockService.upDownCount();
+    }
 
 }

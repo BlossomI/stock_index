@@ -144,6 +144,23 @@ public class StockServiceImpl implements StockService {
 
         return R.ok(pageResult);
     }
+
+
+    @Override
+    public R<map> upDownCount(){
+        // 1 获取股票最近的有效交易日期
+        
+        // 开盘日期
+        
+        // todo mock data
+        String curTimeStr = "20220106142500";
+        
+
+    }
+
+
+
+
     //    @Override
 //    public List<StockBusiness> getAllBusiness() {
 //
