@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 /**
- * @Description 股票涨幅榜Do封装
+ * @Description 股票涨幅榜Do封装 十个field
  * @Author Harry
  * @Date 5/25/2022 8:12 PM
  * @Version 1.0
@@ -18,21 +18,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class StockUpDownDomain {
-    /**
-     * 交易量
-     */
-    private Long tradeAmt;
-
-    /**
-     * 前收盘价
-     */
-    private BigDecimal preClosePrice;
-
-    /**
-     * 振幅
-     */
-    private BigDecimal amplitude;
-
     /**
      * 股票编码
      */
@@ -44,14 +29,15 @@ public class StockUpDownDomain {
     private String name;
 
     /**
-     * 当前日期
+     * 前收盘价
      */
-    private String curDate;
+    private BigDecimal preClosePrice;
 
     /**
-     * 交易金额
+     * 当前价格
      */
-    private BigDecimal tradeVol;
+    private BigDecimal tradePrice;
+
     /**
      * 涨跌
      */
@@ -61,9 +47,26 @@ public class StockUpDownDomain {
      * 涨幅
      */
     private BigDecimal upDown;
+
     /**
-     * 当前价格
+     * 振幅
      */
-    private BigDecimal tradePrice;
+    private BigDecimal amplitude;
+
+    /**
+     * 交易量
+     */
+    private Long tradeAmt;
+
+    /**
+     * 交易金额
+     */
+    private BigDecimal tradeVol;
+
+    /**
+     * 当前日期
+     */
+    private String curDate;
+
 
 }

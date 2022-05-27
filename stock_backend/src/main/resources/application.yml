@@ -61,7 +61,7 @@ pagehelper:
 
   # 配置缓存
 redis:
-  host: 172.25.247.164
+  host: 172.22.33.162
   port: 6379
   database: 0 #Redis数据库索引（默认为0）
   lettuce:
@@ -84,3 +84,13 @@ stock:
     - int_nikkei # 日经指数
     - b_TWSE # 台湾加权
     - b_FSSTI # 新加坡
+  upDownRange:
+    - "<-7%"
+    - "-7~-5%"
+    - "-5~-3%"
+    - "-3~0%"
+    - "0~3%"
+    - "3~5%"
+    - "5~7%"
+    - ">7%"
+# 配置股票相关的参数

@@ -36,4 +36,10 @@ public interface StockRtInfoMapper {
     List<Map> upDownCount(@Param("avlDate") Date curDate,
                           @Param("openDate") Date openDate,
                           @Param("flag") Integer flag);
+
+    List<Map> stockTradeVolCount(@Param("marketIds") List<String> inner,
+                                 @Param("openTime") Date tOpenTime,
+                                 @Param("nowTime") Date tDateTime);
+
+    List<Map> stockUpDownScopeCount(@Param("avlDate")Date avlDate);
 }

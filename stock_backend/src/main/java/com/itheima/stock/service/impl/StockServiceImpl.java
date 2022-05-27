@@ -1,17 +1,14 @@
 package com.itheima.stock.service.impl;
 
+import com.alibaba.excel.EasyExcel;
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.itheima.stock.common.domain.InnerMarketDomain;
-import com.itheima.stock.common.domain.StockBlockDomain;
-import com.itheima.stock.common.domain.StockInfoConfig;
-import com.itheima.stock.common.domain.StockUpDownDomain;
+import com.itheima.stock.common.domain.*;
 import com.itheima.stock.common.enums.ResponseCode;
 import com.itheima.stock.mapper.StockBlockRtInfoMapper;
-import com.itheima.stock.mapper.StockBusinessMapper;
 import com.itheima.stock.mapper.StockMarketIndexInfoMapper;
 import com.itheima.stock.mapper.StockRtInfoMapper;
-import com.itheima.stock.pojo.StockBlockRtInfo;
 import com.itheima.stock.service.StockService;
 import com.itheima.stock.util.DateTimeUtil;
 import com.itheima.stock.vo.resp.PageResult;
@@ -23,7 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @Description
@@ -173,7 +174,7 @@ public class StockServiceImpl implements StockService {
 
         System.out.println(downList);
 
-        HashMap result = new HashMap();
+        HashMap<String, List<Map>> result = new HashMap();
         result.put("upList", upList);
         result.put("downList", downList);
 
@@ -181,8 +182,173 @@ public class StockServiceImpl implements StockService {
 
     }
 
+    /**
+     * 将指定页的股票数据导出到excel表下
+     *
+     * @param response
+     * @param page     当前页
+     * @param pageSize 每页大小
+     */
+    @Override
+    public void stockExport(HttpServletResponse response, Integer page, Integer pageSize) {
 
-    //    @Override
+        try {
+            // 1. 设置响应数据的类型
+            response.setContentType("application/vnd.ms-excel");
+            //2.设置响应数据的编码格式
+            response.setCharacterEncoding("utf-8");
+            //3.设置默认的文件名称
+            // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+            String fileName = URLEncoder.encode("stockRt", "UTF-8");
+            //设置默认文件名称
+            response.setHeader("content-disposition", "attachment;filename=" + fileName + ".xlsx");
+
+            // 分页查询全部数据
+            PageHelper.startPage(page, pageSize);
+
+            List<StockUpDownDomain> infos = stockRtInfoMapper.stockAll();
+            // 4. 导出到输出流
+            List<StockExcelDomain> resultList = infos.stream().map(info -> {
+                StockExcelDomain excelDm = new StockExcelDomain();
+
+                BeanUtils.copyProperties(info, excelDm);
+
+                return excelDm;
+
+            }).collect(Collectors.toList());
+
+
+            EasyExcel.write(response.getOutputStream(), StockExcelDomain.class)
+                    .sheet().doWrite(resultList);
+
+//            PageInfo<StockUpDownDomain> infoList = new PageInfo<>(infos);
+        } catch (Exception e) {
+//            log.info()
+            e.printStackTrace();
+        }
+
+
+    }
+
+    /**
+     * Description: get the latest trade time and previous days trade time and turn them to Date Object,
+     * then query db by them. Finally, combine them to a map;
+     *
+     * @return result R
+     */
+    @Override
+    public R<Map> stockTradeVol4InnerMarket() {
+
+        //<editor-fold desc="Real Time, tTime, tOpenTIme, preTime, preOpenTIme">
+        //1.获取最近的股票交易日时间，精确到分钟 T交易日
+        DateTime tDate = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        Date tDateTime = tDate.toDate();
+        //对应的开盘时间
+        Date tOpenTime = DateTimeUtil.getOpenDate(tDate).toDate();
+
+
+        //获取T-1交易日
+        DateTime preTDate = DateTimeUtil.getPreviousTradingDay(tDate);
+        Date preTTime = preTDate.toDate();
+        Date preTOpenTime = DateTimeUtil.getOpenDate(preTDate).toDate();
+        //</editor-fold>
+
+
+        //<editor-fold desc="Mock data">
+        //TODO 后续注释掉 mock-data
+        String tDateStr = "20220103143000";
+
+        tDateTime = DateTime.parse(tDateStr, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+        //mock-data
+        String openDateStr = "20220103093000";
+        tOpenTime = DateTime.parse(openDateStr, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+
+
+        //TODO 后续注释掉 mock-data
+        String preTStr = "20220102143000";
+        preTTime = DateTime.parse(preTStr, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+
+        //mock-data
+        String openDateStr2 = "20220102093000";
+        preTOpenTime = DateTime.parse(openDateStr2, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+        //</editor-fold>
+
+
+        // query database Tday
+        List<Map> tList = stockRtInfoMapper.stockTradeVolCount(stockInfoConfig.getInner(), tOpenTime, tDateTime);
+
+        // query database T-1 day
+        List<Map> preList = stockRtInfoMapper.stockTradeVolCount(stockInfoConfig.getInner(), preTOpenTime, preTTime);
+
+        HashMap<String, List> infos = new HashMap<>();
+        infos.put("volList", tList);
+        infos.put("yesVolList", preList);
+
+
+        return R.ok(infos);
+    }
+
+    /**
+     * 功能描述：统计在当前时间下（精确到分钟），股票在各个涨跌区间的数量
+     * 如果当前不在股票有效时间内，则以最近的一个有效股票交易时间作为查询时间点；
+     *
+     * @return 响应数据格式：
+     * {
+     * "code": 1,
+     * "data": {
+     * "time": "2021-12-31 14:58:00",
+     * "infos": [
+     * {
+     * "count": 17,
+     * "title": "-3~0%"
+     * },
+     * ...
+     * ]
+     * }
+     */
+    @Override
+    public R<Map> stockUpDown() {
+        DateTime dateTIme = DateTimeUtil.getLastDate4Stock(DateTime.now());
+
+        Date avlDate = dateTIme.toDate();
+
+        // mock data
+        String mockData = "20220106095500";
+        avlDate = DateTime.parse(mockData, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+
+
+        // query database
+        List<Map> rowList = stockRtInfoMapper.stockUpDownScopeCount(avlDate);
+
+        for (Map map : rowList) {
+            System.out.println(map);
+        }
+
+        List<String> upDownRange = stockInfoConfig.getUpDownRange();
+
+        List<Map> mapList = upDownRange.stream().map(key -> {
+            Optional<Map> title = rowList.stream().filter(map -> key.equals(map.get("title"))).findFirst();
+
+            Map temp = null;
+            if (title.isPresent()) {
+                temp = title.get();
+            } else {
+                temp = new HashMap();
+                temp.put("title", key);
+                temp.put("count", 0);
+            }
+
+            return temp;
+        }).collect(Collectors.toList());
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("time", dateTIme.toString());
+        data.put("infos", mapList);
+
+        return R.ok(data);
+    }
+
+//    @Override
 //    public List<StockBusiness> getAllBusiness() {
 //
 //        return stockBusinessMapper.getAll();

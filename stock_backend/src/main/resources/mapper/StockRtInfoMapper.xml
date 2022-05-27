@@ -25,9 +25,11 @@
         trade_amount,trade_volume
     </sql>
 
+    <!--    <![CDATA[ ]]> -->
 
     <!--分页查询涨幅榜-->
     <select id="stockIncreaseLimit" resultType="com.itheima.stock.common.domain.StockUpDownDomain">
+        <![CDATA[
         SELECT
             trade_amount                                    AS tradeAmt,
             pre_close_price                                 AS preClosePrice,
@@ -45,6 +47,7 @@
         ORDER BY cur_time DESC,
                  upDown DESC
         LIMIT 10;
+        ]]>
     </select>
 
     <!--涨幅榜-->
@@ -77,7 +80,7 @@
         DATE_FORMAT(cur_time,'%Y%m%d%H%i') AS `curTime`,
         (cur_price-pre_close_price)/pre_close_price AS upDown
         FROM
-        stock_rt_info
+        db_socket_backend.stock_rt_info
         WHERE cur_time BETWEEN #{openDate} AND #{avlDate}
         HAVING
         <if test="flag==1">
@@ -90,6 +93,55 @@
         GROUP BY tmp.curTime
     </select>
 
+    <!--    查询当前时间到最近的开盘时间之间每分钟交易量， -->
+    <select id="stockTradeVolCount" resultType="java.util.Map">
+        SELECT
+        SUM(trade_volume) AS `count`,
+        DATE_FORMAT(cur_time, '%Y%m%d%H%i') AS `time`
+        FROM
+        db_socket_backend.stock_market_index_info
+        WHERE
+        cur_time BETWEEN #{openTime} AND #{nowTime}
+        AND mark_Id IN
+        <foreach collection="marketIds" item="id" separator="," open="(" close=")">#{id}
+        </foreach
+        >
+        GROUP BY TIME;
+    </select>
+
+
+    <!--   查询涨幅区间股票个数-->
+    <select id="stockUpDownScopeCount" resultType="java.util.Map">
+        <![CDATA[
+        SELECT
+            tt.title,
+            COUNT(*) AS count
+        FROM
+            (
+                SELECT
+                    CASE
+                        WHEN temp.rate > 0.07 THEN '>7%'
+                        WHEN temp.rate > 0.05 AND temp.rate <= 0.07 THEN '5~7%'
+                        WHEN temp.rate > 0.03 AND temp.rate <= 0.05 THEN '3~5%'
+                        WHEN temp.rate > 0 AND temp.rate <= 0.03 THEN '0~3%'
+                        WHEN temp.rate > -0.03 AND temp.rate <= 0 THEN '-3~0%'
+                        WHEN temp.rate > -0.05 AND temp.rate <= -0.03 THEN '-5~-3%'
+                        WHEN temp.rate > -0.07 AND temp.rate <= -0.05 THEN '-7~-5%'
+                        ELSE '<-7%'
+                        END AS 'title'
+                FROM
+                    (
+                        SELECT
+                            DATE_FORMAT(sri.cur_time, '%Y%m%d%H%i')                     AS curTime,
+                            (sri.cur_price - sri.pre_close_price) / sri.pre_close_price AS rate
+                        FROM
+                            db_socket_backend.stock_rt_info sri
+                        WHERE sri.cur_time = #{avlDate}
+                    ) AS temp
+            ) AS tt
+        GROUP BY tt.title
+        ]]>
+    </select>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select

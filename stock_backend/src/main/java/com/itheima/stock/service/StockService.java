@@ -8,6 +8,7 @@ import com.itheima.stock.pojo.StockBusiness;
 import com.itheima.stock.vo.resp.PageResult;
 import com.itheima.stock.vo.resp.R;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -30,14 +31,37 @@ public interface StockService {
 
     R<PageResult<StockUpDownDomain>> stockPage(Integer page, Integer pageSize);
 
-     /**
-     *   Description：沪深两市涨跌停分时行情数据查询，查询T日每分钟的涨跌停数据（T：当前股票交易日）
-     * 		          查询每分钟的涨停和跌停的数据的同级；
-     * 		          如果不在股票的交易日内，那么就统计最近的股票交易下的数据
-     * 	 map:
-     * 	    upList:涨停数据统计
-     * 	    downList:跌停数据统计
+    /**
+     * Description：沪深两市涨跌停分时行情数据查询，查询T日每分钟的涨跌停数据（T：当前股票交易日）
+     * 查询每分钟的涨停和跌停的数据的同级；
+     * 如果不在股票的交易日内，那么就统计最近的股票交易下的数据
+     * map:
+     * upList:涨停数据统计
+     * downList:跌停数据统计
+     *
      * @return
      */
     R<Map> upDownCount();
+
+    void stockExport(HttpServletResponse response, Integer page, Integer pageSize);
+
+    /**
+     * 功能描述：统计国内A股大盘T日和T-1日成交量对比功能（成交量为沪市和深市成交量之和）
+     * map结构示例：<Map>
+     * {
+     * "volList": [{"count": 3926392,"time": "202112310930"},......],
+     * "yesVolList":[{"count": 3926392,"time": "202112310930"},......]
+     * }</Map>
+     *
+     * @return
+     */
+    R<Map> stockTradeVol4InnerMarket();
+
+    /**
+     * 个股涨跌幅统计，当前时间
+     * 如果当前时间不是交易日，则选取最近的上一个交易时间作为查询时间
+     *
+     * @return R
+     */
+    R<Map> stockUpDown();
 }
