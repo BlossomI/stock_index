@@ -1,5 +1,7 @@
 package com.itheima.stock.mapper;
 
+import com.itheima.stock.common.domain.Stock4MinDomain;
+import com.itheima.stock.common.domain.StockDailyDKLineDomain;
 import com.itheima.stock.common.domain.StockUpDownDomain;
 import com.itheima.stock.pojo.StockRtInfo;
 import org.apache.ibatis.annotations.Param;
@@ -41,5 +43,20 @@ public interface StockRtInfoMapper {
                                  @Param("openTime") Date tOpenTime,
                                  @Param("nowTime") Date tDateTime);
 
-    List<Map> stockUpDownScopeCount(@Param("avlDate")Date avlDate);
+    List<Map> stockUpDownScopeCount(@Param("avlDate") Date avlDate);
+
+
+    /**
+     * 功能描述：查询单个个股的分时行情数据，也就是统计指定股票T日每分钟的交易数据；
+     * 如果当前日期不在有效时间内，则以最近的一个股票交易时间作为查询时间点
+     *
+     * @param code 股票编码
+     */
+    List<Stock4MinDomain> stockScreenTimeSharing(@Param("stockCode") String code,
+                                                 @Param("startDate") Date openDate,
+                                                 @Param("endDate") Date curDate);
+
+    List<StockDailyDKLineDomain> stockScreenDkLine(@Param("stockCode") String stockCode,
+                                                   @Param("pre20Dat") Date pre20Day,
+                                                   @Param("curDate") Date curTime);
 }

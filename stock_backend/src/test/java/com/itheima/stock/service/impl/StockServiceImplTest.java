@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,4 +24,26 @@ class StockServiceImplTest {
 
         System.out.println("mapR = " + mapR);
     }
+
+    @Test
+    public void stockUpDownTest() {
+//        R<Map> mapR = stockService.stockUpDown();
+//
+//        Map data = mapR.getData();
+//
+//        List<Map> maps = (List<Map>) data.get("time");
+//
+//        for (Map map1 : maps) {
+//            System.out.println(map1);
+//        }
+//
+//        String key = "<-7%";
+//
+//        Optional<Map> t1 = maps.stream().filter(map -> key.equals(map.get("title"))).findFirst();
+//
+//        System.out.println(t1);
+
+
+    }
+
 }

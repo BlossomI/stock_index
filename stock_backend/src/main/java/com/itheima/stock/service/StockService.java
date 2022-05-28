@@ -1,10 +1,6 @@
 package com.itheima.stock.service;
 
-import com.itheima.stock.common.domain.InnerMarketDomain;
-import com.itheima.stock.common.domain.StockBlockDomain;
-import com.itheima.stock.common.domain.StockUpDownDomain;
-import com.itheima.stock.pojo.StockBlockRtInfo;
-import com.itheima.stock.pojo.StockBusiness;
+import com.itheima.stock.common.domain.*;
 import com.itheima.stock.vo.resp.PageResult;
 import com.itheima.stock.vo.resp.R;
 
@@ -64,4 +60,15 @@ public interface StockService {
      * @return R
      */
     R<Map> stockUpDown();
+
+
+    /**
+     * 功能描述：查询单个个股的分时行情数据，也就是统计指定股票T日每分钟的交易数据；
+     * 如果当前日期不在有效时间内，则以最近的一个股票交易时间作为查询时间点
+     *
+     * @param code 股票编码
+     */
+    R<List<Stock4MinDomain>> stockScreenTimeSharing(String code);
+
+    R<List<StockDailyDKLineDomain>> getDailyKLineData(String stockCode);
 }

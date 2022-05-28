@@ -143,6 +143,59 @@
         ]]>
     </select>
 
+
+    <!--    功能描述：查询单个个股的分时行情数据，也就是统计指定股票T日每分钟的交易数据；
+          如果当前日期不在有效时间内，则以最近的一个股票交易时间作为查询时间点-->
+    <select id="stockScreenTimeSharing" resultType="com.itheima.stock.common.domain.Stock4MinDomain">
+        SELECT
+            DATE_FORMAT(sri.cur_time, '%Y%m%d%H%i') AS date,
+            sri.trade_amount                        AS tradeAmt,
+            sri.stock_code                          AS code,
+            sri.min_price                           AS lowPrice,
+            sri.pre_close_price                     AS preClosePrice,
+            sri.stock_name                          AS name,
+            sri.max_price                           AS highPrice,
+            sri.open_price                          AS openPrice,
+            sri.trade_volume                        AS tradeVol,
+            sri.cur_price                           AS tradePrice
+        FROM
+            db_socket_backend.stock_rt_info AS sri
+        WHERE
+              sri.stock_code = #{stockCode}
+          AND sri.cur_time BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+
+    <!--    获取个股日K数据-->
+    <select id="stockScreenDkLine" resultType="com.itheima.stock.common.domain.StockDailyDKLineDomain">
+        SELECT
+            DATE_FORMAT(sri2.cur_time, '%Y%m%d') AS `date`,
+            sri2.trade_amount                    AS tradeAmt,
+            sri2.stock_code                      AS code,
+            sri2.min_price                       AS lowPrice,
+            sri2.stock_name                      AS name,
+            sri2.max_price                       AS highPrice,
+            sri2.open_price                      AS openPrice,
+            sri2.trade_volume                    AS tradeVol,
+            sri2.cur_price                       AS closePrice,
+            sri2.pre_close_price                 AS preClosePrice
+        FROM
+            db_socket_backend.stock_rt_info sri2
+        WHERE
+                cur_time IN (
+                SELECT
+                    MAX(sri.cur_time) AS `closeDate`
+                FROM
+                    db_socket_backend.stock_rt_info sri
+                WHERE
+                      sri.stock_code = '600021'
+                  AND sri.cur_time BETWEEN '20220101093000' AND '20220106142500'
+                GROUP BY DATE_FORMAT(sri.cur_time, '%Y%m%d')
+                ORDER BY closeDate );
+
+    </select>
+
+    <!--    auto generated-->
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>

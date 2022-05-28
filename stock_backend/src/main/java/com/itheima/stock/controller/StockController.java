@@ -1,14 +1,13 @@
 package com.itheima.stock.controller;
 
-import com.itheima.stock.common.domain.InnerMarketDomain;
-import com.itheima.stock.common.domain.StockBlockDomain;
-import com.itheima.stock.common.domain.StockUpDownDomain;
+import com.itheima.stock.common.domain.*;
 import com.itheima.stock.pojo.StockBusiness;
 import com.itheima.stock.service.StockService;
 import com.itheima.stock.vo.resp.PageResult;
 import com.itheima.stock.vo.resp.R;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -112,12 +111,31 @@ public class StockController {
 
     /**
      * 个股涨跌幅统计，当前时间
-     * 如果当前时间不是交易日，则选取最近的上一个交易时间作为查询时间
+     * 如果当前时间不是交易日，则选取最近的上一个交易时间作为查询时c
      *
      * @return result R
      */
     @GetMapping("/stock/updown")
-    public R<Map> getStockUpDown(){
+    public R<Map> getStockUpDown() {
         return stockService.stockUpDown();
     }
+
+    /**
+     * 功能描述：查询单个个股的分时行情数据，也就是统计指定股票T日每分钟的交易数据；
+     * 如果当前日期不在有效时间内，则以最近的一个股票交易时间作为查询时间点
+     *
+     * @param code 股票编码
+     */
+    @GetMapping("/stock/screen/time-sharing")
+    public R<List<Stock4MinDomain>> stockScreenTimeSharing(String code) {
+        return stockService.stockScreenTimeSharing(code);
+    }
+
+
+    @GetMapping("/screen/dkline")
+    public R<List<StockDailyDKLineDomain>> getDailyKLineData(@RequestParam("code") String stockCode){
+        return stockService.getDailyKLineData(stockCode);
+    }
+
+
 }

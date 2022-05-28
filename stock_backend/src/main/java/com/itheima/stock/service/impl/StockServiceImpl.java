@@ -348,7 +348,55 @@ public class StockServiceImpl implements StockService {
         return R.ok(data);
     }
 
-//    @Override
+    @Override
+    public R<List<Stock4MinDomain>> stockScreenTimeSharing(String code) {
+        // get now time and the latest open time
+        DateTime curDateTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+
+        // get Date from DateTime
+        Date curDate = curDateTime.toDate();
+
+        Date openDate = DateTimeUtil.getOpenDate(curDateTime).toDate();
+
+        //<editor-fold desc="Mock data">
+        //TODO 后续删除 mock-data
+        String mockDate = "20220106142500";
+        curDate = DateTime.parse(mockDate, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+        String openDateStr = "20220106093000";
+        openDate = DateTime.parse(openDateStr, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+        //</editor-fold>
+
+        List<Stock4MinDomain> infos = stockRtInfoMapper.stockScreenTimeSharing(code, openDate, curDate);
+
+
+        return R.ok(infos);
+    }
+
+    @Override
+    public R<List<StockDailyDKLineDomain>> getDailyKLineData(String stockCode) {
+        //<editor-fold desc="get time data">
+        //获取当前日期
+        DateTime curDateTime = DateTimeUtil.getLastDate4Stock(DateTime.now());
+        //当前时间节点
+        Date curTime = curDateTime.toDate();
+        //前推20
+        Date pre20Day = curDateTime.minusDays(20).toDate();
+
+        //TODO 后续删除
+        String avlDate = "20220106142500";
+        curTime = DateTime.parse(avlDate, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+        String openDate = "20220101093000";
+        pre20Day = DateTime.parse(openDate, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+        //</editor-fold>
+
+
+        // query data from database;
+        List<StockDailyDKLineDomain> infos = stockRtInfoMapper.stockScreenDkLine(stockCode, pre20Day, curTime);
+
+        return R.ok(infos);
+    }
+
+    //    @Override
 //    public List<StockBusiness> getAllBusiness() {
 //
 //        return stockBusinessMapper.getAll();
