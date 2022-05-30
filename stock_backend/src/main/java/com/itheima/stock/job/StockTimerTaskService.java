@@ -1,4 +1,4 @@
-package com.itheima.stock.service;
+package com.itheima.stock.job;
 
 /**
  * @Description 定义股票数据定时采集任务接口

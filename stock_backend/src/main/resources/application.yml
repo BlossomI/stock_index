@@ -1,6 +1,6 @@
 # web定义
 server:
-  port: 8081
+  port: 8082
 
 spring:
   # 配置mysql数据源
@@ -96,3 +96,17 @@ stock:
   marketUrl: http://hq.sinajs.cn/list=
   blockUrl: http://vip.stock.finance.sina.com.cn/q/view/newSinaHy.php
 # 配置股票相关的参数
+
+# XXJOB参数配置
+xxl:
+  job:
+    accessToken:
+    admin:
+      addresses: http://127.0.0.1:8083/heima-job-admin
+    executor:
+      appname: heima-stock-job-executor
+      address:
+      ip:
+      port: 6666
+      logpath: /joblog
+      logretentiondays: 30

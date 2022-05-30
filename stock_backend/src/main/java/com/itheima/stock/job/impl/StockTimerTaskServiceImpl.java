@@ -1,4 +1,4 @@
-package com.itheima.stock.service.impl;
+package com.itheima.stock.job.impl;
 
 import com.google.common.collect.Lists;
 import com.itheima.stock.common.domain.StockInfoConfig;
@@ -9,7 +9,7 @@ import com.itheima.stock.mapper.StockRtInfoMapper;
 import com.itheima.stock.pojo.StockBlockRtInfo;
 import com.itheima.stock.pojo.StockMarketIndexInfo;
 import com.itheima.stock.pojo.StockRtInfo;
-import com.itheima.stock.service.StockTimerTaskService;
+import com.itheima.stock.job.StockTimerTaskService;
 import com.itheima.stock.util.DateTimeUtil;
 import com.itheima.stock.util.IdWorker;
 import com.itheima.stock.util.ParserStockInfoUtil;

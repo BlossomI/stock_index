@@ -1,5 +1,6 @@
 package com.itheima.stock.service.impl;
 
+import com.itheima.stock.job.impl.StockTimerTaskServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
