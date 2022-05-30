@@ -1,7 +1,6 @@
 package com.itheima.stock.service.impl;
 
 import com.alibaba.excel.EasyExcel;
-import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.itheima.stock.common.domain.*;
@@ -21,7 +20,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -193,6 +191,8 @@ public class StockServiceImpl implements StockService {
     public void stockExport(HttpServletResponse response, Integer page, Integer pageSize) {
 
         try {
+
+            //<editor-fold desc="getTime">
             // 1. 设置响应数据的类型
             response.setContentType("application/vnd.ms-excel");
             //2.设置响应数据的编码格式
@@ -202,13 +202,16 @@ public class StockServiceImpl implements StockService {
             String fileName = URLEncoder.encode("stockRt", "UTF-8");
             //设置默认文件名称
             response.setHeader("content-disposition", "attachment;filename=" + fileName + ".xlsx");
+            //</editor-fold>
 
             // 分页查询全部数据
             PageHelper.startPage(page, pageSize);
 
             List<StockUpDownDomain> infos = stockRtInfoMapper.stockAll();
+
             // 4. 导出到输出流
             List<StockExcelDomain> resultList = infos.stream().map(info -> {
+
                 StockExcelDomain excelDm = new StockExcelDomain();
 
                 BeanUtils.copyProperties(info, excelDm);

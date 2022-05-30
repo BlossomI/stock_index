@@ -1,7 +1,6 @@
 package com.itheima.stock.mapper;
 
 import com.itheima.stock.common.domain.InnerMarketDomain;
-import com.itheima.stock.common.domain.StockBlockDomain;
 import com.itheima.stock.pojo.StockMarketIndexInfo;
 import org.apache.ibatis.annotations.Param;
 
@@ -32,4 +31,5 @@ public interface StockMarketIndexInfoMapper {
                                                @Param("lastDate") Date lastDate);
 
 
+    int batchInsert(List<StockMarketIndexInfo> list);
 }

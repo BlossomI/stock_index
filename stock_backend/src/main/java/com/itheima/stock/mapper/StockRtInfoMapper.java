@@ -5,7 +5,6 @@ import com.itheima.stock.common.domain.StockDailyDKLineDomain;
 import com.itheima.stock.common.domain.StockUpDownDomain;
 import com.itheima.stock.pojo.StockRtInfo;
 import org.apache.ibatis.annotations.Param;
-import org.joda.time.DateTime;
 
 import java.util.Date;
 import java.util.List;
@@ -59,4 +58,11 @@ public interface StockRtInfoMapper {
     List<StockDailyDKLineDomain> stockScreenDkLine(@Param("stockCode") String stockCode,
                                                    @Param("pre20Dat") Date pre20Day,
                                                    @Param("curDate") Date curTime);
+
+    /**
+     * 批量插入功能
+     * @param stockRtInfoList
+     */
+    int insertBatch(List<StockRtInfo> stockRtInfoList);
+
 }

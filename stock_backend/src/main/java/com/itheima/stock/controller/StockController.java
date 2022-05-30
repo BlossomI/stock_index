@@ -132,7 +132,7 @@ public class StockController {
     }
 
 
-    @GetMapping("/screen/dkline")
+    @GetMapping("/stock/screen/dkline")
     public R<List<StockDailyDKLineDomain>> getDailyKLineData(@RequestParam("code") String stockCode){
         return stockService.getDailyKLineData(stockCode);
     }

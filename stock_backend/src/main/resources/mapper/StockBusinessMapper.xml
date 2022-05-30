@@ -19,6 +19,12 @@
         sector_name,business,update_time
     </sql>
 
+    <!--    获得所有股票代码-->
+    <select id="getStockIds" resultType="java.lang.String">
+        select sec_code
+        from stock_business;
+    </select>
+
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -28,8 +34,6 @@
     </select>
 
 
-
-
     <select id="getAll" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -37,14 +41,11 @@
     </select>
 
 
-
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         delete
         from stock_business
         where sec_code = #{secCode,jdbcType=CHAR}
     </delete>
-
-
 
 
     <insert id="insert" keyColumn="sec_code" keyProperty="secCode" parameterType="com.itheima.stock.pojo.StockBusiness"
@@ -55,8 +56,6 @@
         values ( #{secCode,jdbcType=CHAR}, #{secName,jdbcType=VARCHAR}, #{sectorCode,jdbcType=VARCHAR}
                , #{sectorName,jdbcType=VARCHAR}, #{business,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
     </insert>
-
-
 
 
     <insert id="insertSelective" keyColumn="sec_code" keyProperty="secCode"
@@ -81,8 +80,6 @@
     </insert>
 
 
-
-
     <update id="updateByPrimaryKeySelective" parameterType="com.itheima.stock.pojo.StockBusiness">
         update stock_business
         <set>
@@ -104,8 +101,6 @@
         </set>
         where sec_code = #{secCode,jdbcType=CHAR}
     </update>
-
-
 
 
     <update id="updateByPrimaryKey" parameterType="com.itheima.stock.pojo.StockBusiness">

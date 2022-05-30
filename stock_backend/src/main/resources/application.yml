@@ -61,7 +61,7 @@ pagehelper:
 
   # 配置缓存
 redis:
-  host: 172.18.101.44
+  host: 172.18.108.158
   port: 6379
   database: 0 #Redis数据库索引（默认为0）
   lettuce:
@@ -93,4 +93,6 @@ stock:
     - "3~5%"
     - "5~7%"
     - ">7%"
+  marketUrl: http://hq.sinajs.cn/list=
+  blockUrl: http://vip.stock.finance.sina.com.cn/q/view/newSinaHy.php
 # 配置股票相关的参数

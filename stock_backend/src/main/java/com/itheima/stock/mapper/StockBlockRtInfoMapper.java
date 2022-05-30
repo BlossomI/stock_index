@@ -31,4 +31,6 @@ public interface StockBlockRtInfoMapper {
      * @return StockBlockDomain 列表对象
      */
     List<StockBlockDomain> sectorAllLimit();
+
+    int insertBatch(List<StockBlockRtInfo> blockRtInfos);
 }
