@@ -26,7 +26,7 @@
 
     <!--    Batch insert inner market info-->
     <insert id="batchInsert">
-        insert into stock_market_index_info
+        insert into db_socket_backend.stock_market_index_info
         ( id,
          mark_Id,
          cur_time,

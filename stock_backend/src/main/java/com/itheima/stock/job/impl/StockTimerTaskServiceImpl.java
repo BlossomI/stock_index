@@ -100,7 +100,10 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
         while (matcher.find()) {
             // get market id
             String marketCode = matcher.group(1);
-//            System.out.println("marketCode = " + marketCode);
+
+            // 截取字符串，make it to be like this "s_sh000001"
+            String realCode = marketCode.substring(11);
+            System.out.println("marketCode = " + realCode);
 
             // other information
             String other = matcher.group(2);
@@ -130,7 +133,7 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
                     .curTime(now)
                     .curPoint(curPoint)
                     .currentPrice(curPrice)
-                    .markId(marketCode)
+                    .markId(realCode)
                     .build();
             list.add(info);
 
