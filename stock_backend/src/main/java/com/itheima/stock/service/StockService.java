@@ -19,7 +19,7 @@ public interface StockService {
 
 //    List<StockBusiness> getAllBusiness();
 
-    R<List<InnerMarketDomain>> InnerIndexAll();
+    R<List<ForeignMarketDomain>> InnerIndexAll();
 
     R<List<StockBlockDomain>> sectorAllLimit();
 
@@ -71,4 +71,6 @@ public interface StockService {
     R<List<Stock4MinDomain>> stockScreenTimeSharing(String code);
 
     R<List<StockDailyDKLineDomain>> getDailyKLineData(String stockCode);
+
+    R<List<ForeignMarketDomain>> getForeignMarketInfo();
 }

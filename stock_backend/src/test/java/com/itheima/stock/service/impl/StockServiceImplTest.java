@@ -1,9 +1,13 @@
 package com.itheima.stock.service.impl;
 
+import com.itheima.stock.common.domain.ForeignMarketDomain;
 import com.itheima.stock.service.StockService;
+import com.itheima.stock.vo.resp.R;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 @SpringBootTest
 class StockServiceImplTest {
@@ -39,4 +43,11 @@ class StockServiceImplTest {
 
     }
 
+    @Test
+    void getForeignMarketInfo() {
+        R<List<ForeignMarketDomain>> r = stockService.getForeignMarketInfo();
+        for (ForeignMarketDomain datum : r.getData()) {
+            System.out.println(datum);
+        }
+    }
 }

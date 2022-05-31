@@ -50,7 +50,7 @@ public class StockServiceImpl implements StockService {
 
 
     @Override
-    public R<List<InnerMarketDomain>> InnerIndexAll() {
+    public R<List<ForeignMarketDomain>> InnerIndexAll() {
         // 1. 获取国内大盘id集合
         List<String> innerIds = stockInfoConfig.getInner();
 
@@ -61,7 +61,7 @@ public class StockServiceImpl implements StockService {
         String mockDate = "20211226105600";//TODO后续大盘数据实时拉去，将该行注释掉 传入的日期秒必须为0
         lastDate = DateTime.parse(mockDate, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
 
-        List<InnerMarketDomain> maps = stockMarketIndexInfoMapper.selectByIdsAndDate(innerIds, lastDate);
+        List<ForeignMarketDomain> maps = stockMarketIndexInfoMapper.selectByIdsAndDate(innerIds, lastDate);
 
         // 組裝數據
         if (CollectionUtils.isEmpty(maps)) {
@@ -395,6 +395,27 @@ public class StockServiceImpl implements StockService {
 
         // query data from database;
         List<StockDailyDKLineDomain> infos = stockRtInfoMapper.stockScreenDkLine(stockCode, pre20Day, curTime);
+
+        return R.ok(infos);
+    }
+
+    @Override
+    public R<List<ForeignMarketDomain>> getForeignMarketInfo() {
+        // 1. 获取国内大盘id集合
+        List<String> outerIds = stockInfoConfig.getOuter();
+
+        // 2. 获取最新的股票有效交易日
+        Date lastDate = DateTimeUtil.getLastDate4Stock(DateTime.now()).toDate();
+
+        // mock 数据
+        String mockDate = "20220531193300";//TODO后续大盘数据实时拉去，将该行注释掉 传入的日期秒必须为0
+        lastDate = DateTime.parse(mockDate, DateTimeFormat.forPattern("yyyyMMddHHmmss")).toDate();
+
+        List<ForeignMarketDomain> infos = stockMarketIndexInfoMapper.getForeignMarketInfo(outerIds, lastDate);
+
+        if (CollectionUtils.isEmpty(infos)) {
+            return R.error(ResponseCode.NO_RESPONSE_DATA.getMessage());
+        }
 
         return R.ok(infos);
     }

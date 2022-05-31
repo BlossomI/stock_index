@@ -1,6 +1,6 @@
 package com.itheima.stock.mapper;
 
-import com.itheima.stock.common.domain.InnerMarketDomain;
+import com.itheima.stock.common.domain.ForeignMarketDomain;
 import com.itheima.stock.pojo.StockMarketIndexInfo;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,9 +27,29 @@ public interface StockMarketIndexInfoMapper {
 
     int updateByPrimaryKey(StockMarketIndexInfo record);
 
-    List<InnerMarketDomain> selectByIdsAndDate(@Param("ids") List<String> innerIds,
-                                               @Param("lastDate") Date lastDate);
+    
+    List<ForeignMarketDomain> selectByIdsAndDate(@Param("ids") List<String> innerIds,
+                                                 @Param("lastDate") Date lastDate);
 
 
-    int batchInsert(List<StockMarketIndexInfo> list);
+    /**
+     * Batch insert inner market info
+     *
+     * @param list
+     * @return
+     */
+    int innerMarketBatchInsert(List<StockMarketIndexInfo> list);
+
+
+    /**
+     * batch insert foreign market info
+     *
+     * @param list
+     * @return
+     */
+    int foreignMarketBatchInsert(List<StockMarketIndexInfo> list);
+
+
+    List<ForeignMarketDomain> getForeignMarketInfo(@Param("ids")List<String> outerIds,
+                                                   @Param("lastDate") Date lastDate);
 }

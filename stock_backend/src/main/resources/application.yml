@@ -103,6 +103,7 @@ stock:
     - ">7%"
   marketUrl: http://hq.sinajs.cn/list=
   blockUrl: http://vip.stock.finance.sina.com.cn/q/view/newSinaHy.php
+  foreignUrl: http://hq.sinajs.cn/list=
 # 配置股票相关的参数
 
 # XXJOB参数配置

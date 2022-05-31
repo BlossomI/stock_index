@@ -24,43 +24,7 @@
         <result property="tradeVolume" column="trade_volume" jdbcType="BIGINT"/>
     </resultMap>
 
-    <!--    Batch insert inner market info-->
-    <insert id="batchInsert">
-        insert into db_socket_backend.stock_market_index_info
-        ( id,
-         mark_Id,
-         cur_time,
-         mark_name,
-         cur_point,
-         current_price,
-         updown_rate,
-         trade_account,
-         trade_volume
-        )
-        values
-        <foreach collection="list" item="smi" separator=",">
-            (#{smi.id,jdbcType=BIGINT},
-             #{smi.markId,jdbcType=CHAR},
-             #{smi.curTime,jdbcType=TIMESTAMP},
-             #{smi.markName,jdbcType=VARCHAR},
-             #{smi.curPoint,jdbcType=DECIMAL},
-             #{smi.currentPrice,jdbcType=DECIMAL},
-             #{smi.updownRate,jdbcType=DECIMAL},
-             #{smi.tradeAccount,jdbcType=BIGINT},
-             #{smi.tradeVolume,jdbcType=BIGINT}
-            )
-        </foreach>
-    </insert>
-
-    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from stock_market_index_info
-        where id = #{id,jdbcType=VARCHAR}
-    </select>
-
-
-    <select id="selectByIdsAndDate" resultType="com.itheima.stock.common.domain.InnerMarketDomain">
+    <select id="selectByIdsAndDate" resultType="com.itheima.stock.common.domain.ForeignMarketDomain">
         SELECT
         temp.trade_account AS tradeAmt,
         temp.mark_Id AS code,
@@ -74,7 +38,7 @@
         FROM
         ( SELECT *
         FROM
-        stock_market_index_info smii
+        db_socket_backend.stock_market_index_info smii
         WHERE
         smii.`mark_Id` IN
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
@@ -82,22 +46,106 @@
         </foreach>
         AND smii.`cur_time` = #{lastDate}
         ) AS temp
-        LEFT JOIN stock_market_log_price smlp
+        LEFT JOIN db_socket_backend.stock_market_log_price smlp
         ON smlp.`market_code` = temp.mark_id
         AND DATE_FORMAT(smlp.cur_date, '%Y%m%d') = DATE_FORMAT(temp.cur_time, '%Y%m%d');
+    </select>
+
+    <!--    Batch insert inner market info-->
+    <insert id="innerMarketBatchInsert">
+        insert into db_socket_backend.stock_market_index_info
+        ( id,
+        mark_Id,
+        cur_time,
+        mark_name,
+        cur_point,
+        current_price,
+        updown_rate,
+        trade_account,
+        trade_volume
+        )
+        values
+        <foreach collection="list" item="smi" separator=",">
+            (#{smi.id,jdbcType=BIGINT},
+            #{smi.markId,jdbcType=CHAR},
+            #{smi.curTime,jdbcType=TIMESTAMP},
+            #{smi.markName,jdbcType=VARCHAR},
+            #{smi.curPoint,jdbcType=DECIMAL},
+            #{smi.currentPrice,jdbcType=DECIMAL},
+            #{smi.updownRate,jdbcType=DECIMAL},
+            #{smi.tradeAccount,jdbcType=BIGINT},
+            #{smi.tradeVolume,jdbcType=BIGINT}
+            )
+        </foreach>
+    </insert>
+
+
+    <!--batch insert foreign market info-->
+    <insert id="foreignMarketBatchInsert">
+        insert into db_socket_backend.stock_market_index_info
+        ( id,
+        mark_Id,
+        cur_time,
+        mark_name,
+        cur_point,
+        current_price,
+        updown_rate,
+        trade_account,
+        trade_volume
+        )
+        values
+        <foreach collection="list" item="smi" separator=",">
+            (#{smi.id,jdbcType=BIGINT},
+            #{smi.markId,jdbcType=CHAR},
+            #{smi.curTime,jdbcType=TIMESTAMP},
+            #{smi.markName,jdbcType=VARCHAR},
+            #{smi.curPoint,jdbcType=DECIMAL},
+            #{smi.currentPrice,jdbcType=DECIMAL},
+            #{smi.updownRate,jdbcType=DECIMAL},
+            #{smi.tradeAccount,jdbcType=BIGINT},
+            #{smi.tradeVolume,jdbcType=BIGINT}
+            )
+        </foreach>
+
+    </insert>
+
+    <!--    query outer market info by nowTime-->
+    <select id="getForeignMarketInfo" resultType="com.itheima.stock.common.domain.ForeignMarketDomain">
+        SELECT
+        smi.cur_point AS `curPoint`,
+        DATE_FORMAT(smi.cur_time, '%Y%m%d') AS `curDate`,
+        smi.mark_name AS `name`,
+        smi.current_price AS `curPrice`,
+        smi.updown_rate AS `upDown`
+        FROM
+        db_socket_backend.stock_market_index_info smi
+        WHERE smi.cur_time = #{lastDate} and smi.mark_Id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+
+    </select>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from db_socket_backend.stock_market_index_info
+        where id = #{id,jdbcType=VARCHAR}
     </select>
 
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
         DELETE
-        FROM stock_market_index_info
-        WHERE id = #{id,jdbcType=VARCHAR}
+        FROM
+            db_socket_backend.stock_market_index_info
+        WHERE
+            id = #{id,jdbcType=VARCHAR}
     </delete>
 
 
     <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.itheima.stock.pojo.StockMarketIndexInfo"
             useGeneratedKeys="true">
-        INSERT INTO stock_market_index_info
+        INSERT INTO db_socket_backend.stock_market_index_info
         ( id, mark_Id, cur_time
         , mark_name, cur_point, current_price
         , updown_rate, trade_account, trade_volume)
@@ -107,7 +155,7 @@
     </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id"
             parameterType="com.itheima.stock.pojo.StockMarketIndexInfo" useGeneratedKeys="true">
-        insert into stock_market_index_info
+        insert into db_socket_backend.stock_market_index_info
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
             <if test="markId != null">mark_Id,</if>
@@ -132,7 +180,7 @@
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.itheima.stock.pojo.StockMarketIndexInfo">
-        update stock_market_index_info
+        update db_socket_backend.stock_market_index_info
         <set>
             <if test="markId != null">
                 mark_Id = #{markId,jdbcType=CHAR},
@@ -162,15 +210,16 @@
         where id = #{id,jdbcType=VARCHAR}
     </update>
     <update id="updateByPrimaryKey" parameterType="com.itheima.stock.pojo.StockMarketIndexInfo">
-        UPDATE stock_market_index_info
-        SET mark_Id       = #{markId,jdbcType=CHAR},
-            cur_time      = #{curTime,jdbcType=TIMESTAMP},
-            mark_name     = #{markName,jdbcType=VARCHAR},
-            cur_point     = #{curPoint,jdbcType=DECIMAL},
+        UPDATE db_socket_backend.stock_market_index_info
+        SET mark_Id = #{markId,jdbcType=CHAR},
+            cur_time = #{curTime,jdbcType=TIMESTAMP},
+            mark_name = #{markName,jdbcType=VARCHAR},
+            cur_point = #{curPoint,jdbcType=DECIMAL},
             current_price = #{currentPrice,jdbcType=DECIMAL},
-            updown_rate   = #{updownRate,jdbcType=DECIMAL},
+            updown_rate = #{updownRate,jdbcType=DECIMAL},
             trade_account = #{tradeAccount,jdbcType=BIGINT},
-            trade_volume  = #{tradeVolume,jdbcType=BIGINT}
-        WHERE id = #{id,jdbcType=VARCHAR}
+            trade_volume = #{tradeVolume,jdbcType=BIGINT}
+        WHERE
+            id = #{id,jdbcType=VARCHAR}
     </update>
 </mapper>

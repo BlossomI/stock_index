@@ -108,8 +108,9 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
         }
 
         String curTime = DateTime.now().toString(DateTimeFormat.forPattern("yyyyMMddHHmmss"));
+        System.out.println(curTime);
         log.info("Collected market info: {}, current Time: {}", list, curTime);
-        int lines = stockMarketIndexInfoMapper.batchInsert(list);
+        int lines = stockMarketIndexInfoMapper.innerMarketBatchInsert(list);
         log.info("{} Lines have been inserted", lines);
 
 
@@ -184,6 +185,41 @@ public class StockTimerTaskServiceImpl implements StockTimerTaskService {
             });
 
         });
+
+
+    }
+
+    @Override
+    public void getForeignMarketInfo() {
+        // assemble dynamic url
+        String foreignUrl = stockInfoConfig.getForeignUrl() + String.join(",",
+                stockInfoConfig.getOuter());
+
+        // set up headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Referer", "https://finance.sina.com.cn/stock/");
+        headers.add("User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; WOW64) " +
+                        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36");
+
+        // -------------------------- post requests ---------------------------------
+        String result = restTemplate.postForObject(foreignUrl, new HttpEntity<>(headers), String.class);
+        System.out.println(result);
+
+        List list = parserStockInfoUtil.parser4StockOrMarketInfo(result, 2);
+
+        log.info("collection's length: {}, content: {}", list.size(), list);
+
+        // -------------------------- batch insert --------------------------------
+        if (CollectionUtils.isEmpty(list)) {
+            log.warn("");
+            return;
+        }
+
+        String curTime = DateTime.now().toString(DateTimeFormat.forPattern("yyyyMMddHHmmss"));
+        log.info("Collected market info: {}, current Time: {}", list, curTime);
+        int lines = stockMarketIndexInfoMapper.foreignMarketBatchInsert(list);
+        log.info("{} Lines have been inserted", lines);
 
 
     }

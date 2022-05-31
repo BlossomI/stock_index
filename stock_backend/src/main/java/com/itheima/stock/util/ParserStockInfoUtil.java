@@ -28,37 +28,37 @@ public class ParserStockInfoUtil {
 
     /**
      * @param stockStr 大盘 股票 实时拉去原始数据(js格式解析)
-     * @param type 1:国内大盘 2.国外大盘 3.A股
+     * @param type     1:国内大盘 2.国外大盘 3.A股
      * @return 解析后的数据
      */
-    public List parser4StockOrMarketInfo(String stockStr,Integer  type){
+    public List parser4StockOrMarketInfo(String stockStr, Integer type) {
         //收集封装数据
-        List<Object> datas=new ArrayList<>();
+        List<Object> datas = new ArrayList<>();
         //合法判断
         if (Strings.isNullOrEmpty(stockStr)) {
             //返回空数组
             return datas;
         }
         //定义正则 第一组：匹配任意非空字符串  第二组：匹配任意除了换行符的字符串包括名称中出现空格的数据
-        String reg="var hq_str_(\\S*)=\"(.*)\";";
+        String reg = "var hq_str_(\\S*)=\"(.*)\";";
         //编译正则，获取正则对象
         Pattern pattern = Pattern.compile(reg);
         //获取正则匹配器
         Matcher matcher = pattern.matcher(stockStr);
         while (matcher.find()) {
             //解析国内股票大盘
-            if (type==1){
-                StockMarketIndexInfo info=parser4InnerStockMarket(matcher.group(1),matcher.group(2));
+            if (type == 1) {
+                StockMarketIndexInfo info = parser4InnerStockMarket(matcher.group(1), matcher.group(2));
                 datas.add(info);
             }
             //国外大盘
-            if (type==2) {
-                StockMarketIndexInfo info=parser4OuterStockMarket(matcher.group(1),matcher.group(2));
+            if (type == 2) {
+                StockMarketIndexInfo info = parser4OuterStockMarket(matcher.group(1), matcher.group(2));
                 datas.add(info);
             }
             //国内A股信息
-            if(type==3){
-                StockRtInfo info=parser4StockRtInfo(matcher.group(1),matcher.group(2));
+            if (type == 3) {
+                StockRtInfo info = parser4StockRtInfo(matcher.group(1), matcher.group(2));
                 datas.add(info);
             }
         }
@@ -67,58 +67,60 @@ public class ParserStockInfoUtil {
 
     /**
      * 解析国内A股数据
+     *
      * @param stockCode 股票ID
      * @param otherInfo 股票其它信息，以逗号间隔
      * @return
      */
     private StockRtInfo parser4StockRtInfo(String stockCode, String otherInfo) {
-                ////去除股票sz或者sh前缀
-                stockCode = stockCode.substring(2);
-                String[] others = otherInfo.split(",");
-                //大盘名称
-                String stockName = others[0];
-                //今日开盘价
-                BigDecimal openPrice = new BigDecimal(others[1]);
-                //昨日收盘价
-                BigDecimal preClosePrice = new BigDecimal(others[2]);
-                //当前价格
-                BigDecimal currentPrice = new BigDecimal(others[3]);
-                //今日最高价额
-                BigDecimal maxPrice = new BigDecimal(others[4]);
-                //今日最低价额
-                BigDecimal minPrice = new BigDecimal(others[5]);
-                //成交量
-                Long tradeAmount = Long.valueOf(others[8]);
-                //成交金额
-                BigDecimal tradeVol = new BigDecimal(others[9]);
-                //当前日期
-                Date curDateTime = DateTimeUtil.getDateTimeWithoutSecond(others[30] + " " + others[31]).toDate();
-                //Date currentTime = DateTime.parse(others[30] + " " + others[31], DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
-                StockRtInfo stockRtInfo =StockRtInfo.builder()
-                        .id(idWorker.nextId()+"")
-                        .stockCode(stockCode)
-                        .stockName(stockName)
-                        .openPrice(openPrice)
-                        .preClosePrice(preClosePrice)
-                        .curPrice(currentPrice)
-                        .maxPrice(maxPrice)
-                        .minPrice(minPrice)
-                        .tradeAmount(tradeAmount)
-                        .tradeVolume(tradeVol)
-                        .curTime(curDateTime)
-                        .build();
-                return stockRtInfo;
+        ////去除股票sz或者sh前缀
+        stockCode = stockCode.substring(2);
+        String[] others = otherInfo.split(",");
+        //大盘名称
+        String stockName = others[0];
+        //今日开盘价
+        BigDecimal openPrice = new BigDecimal(others[1]);
+        //昨日收盘价
+        BigDecimal preClosePrice = new BigDecimal(others[2]);
+        //当前价格
+        BigDecimal currentPrice = new BigDecimal(others[3]);
+        //今日最高价额
+        BigDecimal maxPrice = new BigDecimal(others[4]);
+        //今日最低价额
+        BigDecimal minPrice = new BigDecimal(others[5]);
+        //成交量
+        Long tradeAmount = Long.valueOf(others[8]);
+        //成交金额
+        BigDecimal tradeVol = new BigDecimal(others[9]);
+        //当前日期
+        Date curDateTime = DateTimeUtil.getDateTimeWithoutSecond(others[30] + " " + others[31]).toDate();
+        //Date currentTime = DateTime.parse(others[30] + " " + others[31], DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")).toDate();
+        StockRtInfo stockRtInfo = StockRtInfo.builder()
+                .id(idWorker.nextId() + "")
+                .stockCode(stockCode)
+                .stockName(stockName)
+                .openPrice(openPrice)
+                .preClosePrice(preClosePrice)
+                .curPrice(currentPrice)
+                .maxPrice(maxPrice)
+                .minPrice(minPrice)
+                .tradeAmount(tradeAmount)
+                .tradeVolume(tradeVol)
+                .curTime(curDateTime)
+                .build();
+        return stockRtInfo;
     }
 
     /**
      * 解析国外大盘数据
+     *
      * @param marketCode 大盘ID
-     * @param otherInfo 大盘其它信息，以逗号间隔
+     * @param otherInfo  大盘其它信息，以逗号间隔
      * @return
      */
     private StockMarketIndexInfo parser4OuterStockMarket(String marketCode, String otherInfo) {
         //其他信息
-        String[] others=otherInfo.split(",");
+        String[] others = otherInfo.split(",");
         //大盘名称
         String marketName = others[0];
         //大盘点数
@@ -128,10 +130,10 @@ public class ParserStockInfoUtil {
         //振幅
         BigDecimal updownRate = new BigDecimal(others[3]);
         //获取当前时间
-        Date now=DateTimeUtil.getDateTimeWithoutSecond(DateTime.now()).toDate();
+        Date now = DateTimeUtil.getDateTimeWithoutSecond(DateTime.now()).toDate();
         //组装实体对象
         StockMarketIndexInfo smi = StockMarketIndexInfo.builder()
-                .id(idWorker.nextId()+"")
+                .id(idWorker.nextId() + "")
                 .markId(marketCode)
                 .curTime(now)
                 .markName(marketName)
@@ -146,13 +148,14 @@ public class ParserStockInfoUtil {
 
     /**
      * 解析国内大盘数据
+     *
      * @param marketCode 大盘ID
-     * @param otherInfo 大盘其它信息，以逗号间隔
+     * @param otherInfo  大盘其它信息，以逗号间隔
      * @return
      */
     private StockMarketIndexInfo parser4InnerStockMarket(String marketCode, String otherInfo) {
         //其他信息
-        String[] others=otherInfo.split(",");
+        String[] others = otherInfo.split(",");
         //大盘名称
         String marketName = others[0];
         //大盘点数
@@ -166,10 +169,10 @@ public class ParserStockInfoUtil {
         //成交金额
         Long tradeVolume = Long.valueOf(others[5]);
         //获取当前时间
-        Date now=DateTimeUtil.getDateTimeWithoutSecond(DateTime.now()).toDate();
+        Date now = DateTimeUtil.getDateTimeWithoutSecond(DateTime.now()).toDate();
         //组装实体对象
         StockMarketIndexInfo smi = StockMarketIndexInfo.builder()
-                .id(idWorker.nextId()+"")
+                .id(idWorker.nextId() + "")
                 .markId(marketCode)
                 .curTime(now)
                 .markName(marketName)
@@ -185,11 +188,12 @@ public class ParserStockInfoUtil {
 
     /**
      * 转化板块数据获取集合信息
+     *
      * @param stockStr
      * @return
      */
-    public List<StockBlockRtInfo> parse4StockBlock(String stockStr){
-        if (Strings.isNullOrEmpty(stockStr)|| !stockStr.contains("=")){
+    public List<StockBlockRtInfo> parse4StockBlock(String stockStr) {
+        if (Strings.isNullOrEmpty(stockStr) || !stockStr.contains("=")) {
             return Collections.emptyList();
         }
         String jsonStr = stockStr.substring(stockStr.indexOf("=") + 1);
@@ -216,9 +220,9 @@ public class ParserStockInfoUtil {
             //总成交金额
             BigDecimal tradeVolume = new BigDecimal(infoArray[7]);
             //当前日期
-            Date now=DateTimeUtil.getDateTimeWithoutSecond(DateTime.now()).toDate();
+            Date now = DateTimeUtil.getDateTimeWithoutSecond(DateTime.now()).toDate();
             //构建板块信息对象
-            StockBlockRtInfo blockRtInfo = StockBlockRtInfo.builder().id(idWorker.nextId()+"").label(label)
+            StockBlockRtInfo blockRtInfo = StockBlockRtInfo.builder().id(idWorker.nextId() + "").label(label)
                     .blockName(blockName).companyNum(companyNum).avgPrice(avgPrice).curTime(now)
                     .updownRate(priceLimit).tradeAmount(tradeAmount).tradeVolume(tradeVolume)
                     .build();

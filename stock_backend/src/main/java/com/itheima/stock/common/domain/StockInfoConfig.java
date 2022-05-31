@@ -25,6 +25,10 @@ public class StockInfoConfig {
 
     //大盘参数获取url
     private String marketUrl;
+
     //板块参数获取url
     private String blockUrl;
+
+    //国外大盘数据url
+    private String foreignUrl;
 }

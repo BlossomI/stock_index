@@ -1,7 +1,6 @@
 package com.itheima.stock.controller;
 
 import com.itheima.stock.common.domain.*;
-import com.itheima.stock.pojo.StockBusiness;
 import com.itheima.stock.service.StockService;
 import com.itheima.stock.vo.resp.PageResult;
 import com.itheima.stock.vo.resp.R;
@@ -35,7 +34,7 @@ public class StockController {
      * @return R结果集，包括装有所有大盘信息对象List
      */
     @GetMapping("/index/all")
-    public R<List<InnerMarketDomain>> innerIndexALl() {
+    public R<List<ForeignMarketDomain>> innerIndexALl() {
 
         return stockService.InnerIndexAll();
     }
@@ -131,10 +130,24 @@ public class StockController {
         return stockService.stockScreenTimeSharing(code);
     }
 
-
+    /**
+     *
+     * @param stockCode
+     * @return
+     */
     @GetMapping("/stock/screen/dkline")
     public R<List<StockDailyDKLineDomain>> getDailyKLineData(@RequestParam("code") String stockCode){
         return stockService.getDailyKLineData(stockCode);
+    }
+
+    /**
+     * Decription: get Outer market information
+     *
+     * @return R
+     */
+    @GetMapping("/external/index")
+    public R<List<ForeignMarketDomain>> getForeignMarketinfo(){
+        return stockService.getForeignMarketInfo();
     }
 
 

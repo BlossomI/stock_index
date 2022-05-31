@@ -22,4 +22,9 @@ public interface StockTimerTaskService {
      * 获取板块数据
      */
     void getStockSectorRtIndex();
+
+    /*
+     * 获取国外大盘数据
+     */
+    void getForeignMarketInfo();
 }
