@@ -2,6 +2,14 @@
 server:
   port: 8082
 
+# 定时任务线程池基础参数
+task:
+  pool:
+    corePoolSize: 5 # 核心线程数
+    maxPoolSize: 20 # 设置最大线程数
+    keepAliveSeconds: 300 # 设置线程活跃时间
+    queueCapacity: 100 # 设置队列容量
+
 spring:
   # 配置mysql数据源
   datasource:
